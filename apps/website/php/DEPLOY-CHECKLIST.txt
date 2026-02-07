@@ -1,0 +1,56 @@
+CHECKLIST DE DEPLOY - Senior Floors
+=====================================
+
+LOCALIZAÇÃO NO SERVIDOR:
+/public_html/newsite/  (ou domains/senior-floors.com/public_html/newsite/)
+
+ARQUIVOS E PASTAS A ENVIAR:
+============================
+
+✅ Arquivos PHP principais:
+   - index.php
+   - config.php
+   - about.php
+   - contact.php
+   - free-estimate.php
+   - portfolio.php
+   - reviews.php
+   - service-areas.php
+   - warranty.php
+   - .htaccess
+
+✅ Pastas:
+   - includes/ (head.php, header.php, footer.php, gallery-script.php)
+   - services/ (index.php, hardwood-refinishing.php, hardwood-installation.php)
+   - flooring/ (index.php, site-finished-wood.php, pre-finished-wood.php, luxury-vinyl.php, engineered-wood.php, laminate.php)
+   - api/ (estimate.php)
+   - data/ (pasta vazia, mas precisa existir)
+   - assets/ (logoSeniorFloors.png, project1.jpg, project2.jpg, project3.jpg, project4.jpg)
+   - videos/ (bg_seniorFloors.mp4)
+
+PERMISSÕES:
+===========
+- Pasta data/: 755 ou 775 (escrita)
+- Arquivos PHP: 644 (leitura)
+- Arquivos de imagem/vídeo: 644
+
+TESTES APÓS DEPLOY:
+===================
+1. https://www.senior-floors.com/newsite/
+2. https://www.senior-floors.com/newsite/about
+3. https://www.senior-floors.com/newsite/contact
+4. https://www.senior-floors.com/newsite/services/
+5. https://www.senior-floors.com/newsite/services/hardwood-refinishing
+6. Testar formulário em /free-estimate
+
+CONFIGURAÇÕES:
+==============
+- BASE_PATH: /newsite (já configurado em config.php)
+- SITE_URL: https://www.senior-floors.com/newsite (já configurado)
+- .htaccess: RewriteBase /newsite (já configurado)
+
+NOTAS:
+======
+- Todos os assets já estão na pasta php/
+- Código está no GitHub: https://github.com/nakazone/newSF.git
+- Versão PHP sincronizada com Next.js

@@ -1,0 +1,32 @@
+# Senior Floors – PHP site (optional: use when site is at root)
+# If the site is inside /newsite, put this .htaccess in the document root
+# and use: RewriteBase /newsite
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Base da pasta do site (quando em www.senior-floors.com/newsite)
+  RewriteBase /newsite
+
+  # Redirect trailing slash to no trailing slash (except for directory)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+  # If request is for a real file or directory, serve it
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Optional: pretty URLs – e.g. /about instead of /about.php
+  RewriteCond %{REQUEST_FILENAME}.php -f
+  RewriteRule ^(.+)$ $1.php [L]
+</IfModule>
+
+# Security: do not list directory contents
+Options -Indexes
+
+# Optional: protect data folder from direct access
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>

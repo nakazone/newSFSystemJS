@@ -1,0 +1,31 @@
+# Dependências
+node_modules/
+
+# Build / output
+dist/
+.next/
+out/
+build/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs e sensíveis (Landing/Sistema)
+config/database.php
+config/smtp.php
+admin-config.php
+*.log
+leads.csv
+
+# OS
+.DS_Store
+
+# IDE
+.vercel
+.idea/
+.vscode/
+
+# Lock (opcional - descomente se quiser um único lock na raiz)
+# package-lock.json

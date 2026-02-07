@@ -1,0 +1,30 @@
+{
+  "name": "senior-floors",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Projeto unificado Senior Floors: Landing, Sistema (CRM), Site",
+  "workspaces": [
+    "apps/landing",
+    "apps/system",
+    "apps/website"
+  ],
+  "scripts": {
+    "build": "npm run build:landing && npm run build:system && npm run build:website",
+    "build:website": "npm run build -w website",
+    "build:landing": "npm run build -w landing",
+    "build:system": "npm run build -w system",
+    "dev:website": "npm run dev -w website",
+    "dev": "concurrently -n landing,system,proxy -c blue,magenta,green \"npm run dev:landing\" \"npm run dev:system\" \"node scripts/dev-proxy.js\"",
+    "dev:landing": "npm run dev -w landing",
+    "dev:system": "npm run dev -w system",
+    "start:website": "npm run start -w website",
+    "start:system": "npm run start -w system",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,15 @@
+# Deploy do app SYSTEM (CRM) no Netlify
+# No Netlify: Site settings > Build & deploy > Build settings
+# - Base directory: apps/system (ou deixe vazio se usar so este arquivo com base abaixo)
+# - Variaveis de ambiente: DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET
+
+[build]
+  base = "apps/system"
+  command = "npm run build"
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Plugin Next.js (Netlify detecta Next e usa runtime correto)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

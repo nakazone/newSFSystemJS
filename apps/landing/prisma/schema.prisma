@@ -1,0 +1,346 @@
+// Senior Floors CRM - Full schema (same DB as legacy PHP)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(255)
+  email        String    @db.VarChar(255)
+  phone        String    @db.VarChar(50)
+  zipcode      String?   @db.VarChar(10)
+  message      String?   @db.Text
+  source       String?   @db.VarChar(50)
+  form_type    String?   @db.VarChar(50)
+  status       String?   @default("new") @db.VarChar(50)
+  priority     String?   @default("medium") @db.VarChar(50)
+  customer_type String?  @db.VarChar(50)
+  owner_id     Int?
+  pipeline_stage_id Int?
+  ip_address   String?   @db.VarChar(45)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  owner        User?     @relation("LeadOwner", fields: [owner_id], references: [id], onDelete: SetNull)
+  notes        LeadNote[]
+  lead_tags    LeadTag[]
+
+  @@index([status])
+  @@index([email])
+  @@index([created_at])
+  @@index([owner_id])
+}
+
+model LeadNote {
+  id        Int      @id @default(autoincrement())
+  lead_id   Int
+  note      String   @db.Text
+  created_by String? @db.VarChar(255)
+  created_at DateTime @default(now())
+
+  lead Lead @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+
+  @@index([lead_id])
+}
+
+model LeadTag {
+  id        Int      @id @default(autoincrement())
+  lead_id   Int
+  tag_name  String   @db.VarChar(50)
+  created_at DateTime @default(now())
+
+  lead Lead @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+
+  @@unique([lead_id, tag_name])
+  @@index([lead_id])
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  lead_id       Int?
+  name          String   @db.VarChar(255)
+  email         String   @db.VarChar(255)
+  phone         String   @db.VarChar(50)
+  address       String?  @db.Text
+  city          String?  @db.VarChar(100)
+  state         String?  @db.VarChar(50)
+  zipcode       String?  @db.VarChar(10)
+  customer_type String?  @db.VarChar(50)
+  owner_id      Int?
+  status        String?  @default("active") @db.VarChar(50)
+  notes         String?  @db.Text
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  owner    User?     @relation("CustomerOwner", fields: [owner_id], references: [id], onDelete: SetNull)
+  projects Project[]
+  customer_notes CustomerNote[]
+  customer_tags  CustomerTag[]
+
+  @@index([lead_id])
+  @@index([email])
+  @@index([owner_id])
+}
+
+model CustomerNote {
+  id          Int      @id @default(autoincrement())
+  customer_id Int
+  note        String   @db.Text
+  created_by  String?  @db.VarChar(255)
+  created_at  DateTime @default(now())
+
+  customer Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+
+  @@index([customer_id])
+}
+
+model CustomerTag {
+  id          Int      @id @default(autoincrement())
+  customer_id Int
+  tag_name    String   @db.VarChar(50)
+  created_at  DateTime @default(now())
+
+  customer Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+
+  @@unique([customer_id, tag_name])
+  @@index([customer_id])
+}
+
+model Project {
+  id                  Int      @id @default(autoincrement())
+  customer_id         Int
+  lead_id             Int?
+  name                String   @db.VarChar(255)
+  project_type        String?  @db.VarChar(50)
+  status              String?  @default("quoted") @db.VarChar(50)
+  post_service_status String?  @db.VarChar(50)
+  address             String?  @db.Text
+  city                String?  @db.VarChar(100)
+  state               String?  @db.VarChar(50)
+  zipcode             String?  @db.VarChar(10)
+  estimated_start_date DateTime?
+  estimated_end_date   DateTime?
+  actual_start_date    DateTime?
+  actual_end_date      DateTime?
+  estimated_cost       Decimal? @db.Decimal(10, 2)
+  actual_cost          Decimal? @db.Decimal(10, 2)
+  owner_id             Int?
+  notes                String?  @db.Text
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  customer Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  owner    User?    @relation("ProjectOwner", fields: [owner_id], references: [id], onDelete: SetNull)
+  project_notes ProjectNote[]
+  project_tags  ProjectTag[]
+
+  @@index([customer_id])
+  @@index([lead_id])
+  @@index([status])
+  @@index([owner_id])
+}
+
+model ProjectNote {
+  id          Int      @id @default(autoincrement())
+  project_id  Int
+  note        String   @db.Text
+  created_by  String?  @db.VarChar(255)
+  created_at  DateTime @default(now())
+
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id])
+}
+
+model ProjectTag {
+  id         Int      @id @default(autoincrement())
+  project_id Int
+  tag_name   String   @db.VarChar(50)
+  created_at DateTime @default(now())
+
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([project_id, tag_name])
+  @@index([project_id])
+}
+
+model Activity {
+  id           Int      @id @default(autoincrement())
+  lead_id      Int?
+  customer_id  Int?
+  project_id   Int?
+  activity_type String? @db.VarChar(50)
+  subject      String?  @db.VarChar(255)
+  description  String?  @db.Text
+  activity_date DateTime?
+  user_id      Int?
+  owner_id     Int?
+  related_to   String?  @db.VarChar(50)
+  created_at   DateTime @default(now())
+
+  @@index([lead_id])
+  @@index([customer_id])
+  @@index([project_id])
+  @@index([activity_date])
+}
+
+model AssignmentHistory {
+  id           Int      @id @default(autoincrement())
+  lead_id      Int?
+  customer_id  Int?
+  project_id   Int?
+  from_user_id Int?
+  to_user_id   Int
+  reason       String?  @db.Text
+  assigned_by  Int?
+  created_at   DateTime @default(now())
+
+  @@index([lead_id])
+  @@index([to_user_id])
+}
+
+model Coupon {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique @db.VarChar(50)
+  name          String?  @db.VarChar(255)
+  discount_type String?  @db.VarChar(50)
+  discount_value Decimal  @db.Decimal(10, 2)
+  max_uses      Int?
+  used_count    Int?     @default(0)
+  valid_from    DateTime?
+  valid_until   DateTime?
+  is_active     Int?     @default(1)
+  created_by    Int?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@index([is_active])
+}
+
+model CouponUsage {
+  id             Int      @id @default(autoincrement())
+  coupon_id      Int
+  lead_id        Int?
+  project_id     Int?
+  discount_amount Decimal? @db.Decimal(10, 2)
+  used_by        Int?
+  used_at        DateTime @default(now())
+
+  @@index([coupon_id])
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  email      String   @unique @db.VarChar(255)
+  phone      String?  @db.VarChar(50)
+  role       String?  @db.VarChar(50)
+  is_active  Int?     @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  leads_owned     Lead[]     @relation("LeadOwner")
+  customers_owned Customer[] @relation("CustomerOwner")
+  projects_owned  Project[]   @relation("ProjectOwner")
+}
+
+model PipelineStage {
+  id               Int    @id @default(autoincrement())
+  name             String @db.VarChar(100)
+  slug             String @unique @db.VarChar(50)
+  order_num        Int?   @default(0)
+  sla_hours        Int?
+  is_closed        Int?   @default(0)
+  created_at       DateTime @default(now())
+
+  @@index([order_num])
+}
+
+model Quote {
+  id              Int       @id @default(autoincrement())
+  lead_id         Int?
+  customer_id     Int?
+  project_id      Int?
+  version         Int?      @default(1)
+  total_amount    Decimal   @db.Decimal(12, 2)
+  labor_amount    Decimal?  @db.Decimal(12, 2)
+  materials_amount Decimal? @db.Decimal(12, 2)
+  margin_percent  Decimal?  @db.Decimal(5, 2)
+  status          String?   @default("draft") @db.VarChar(50)
+  sent_at         DateTime?
+  viewed_at       DateTime?
+  approved_at    DateTime?
+  pdf_path        String?   @db.VarChar(500)
+  created_by      Int?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  quote_items QuoteItem[]
+
+  @@index([lead_id])
+  @@index([customer_id])
+  @@index([project_id])
+  @@index([status])
+}
+
+model QuoteItem {
+  id         Int     @id @default(autoincrement())
+  quote_id   Int
+  floor_type String  @db.VarChar(100)
+  area_sqft  Decimal @db.Decimal(10, 2)
+  unit_price Decimal @db.Decimal(10, 2)
+  total_price Decimal @db.Decimal(12, 2)
+  notes      String? @db.Text
+
+  quote Quote @relation(fields: [quote_id], references: [id], onDelete: Cascade)
+
+  @@index([quote_id])
+}
+
+model Visit {
+  id            Int       @id @default(autoincrement())
+  lead_id       Int?
+  customer_id   Int?
+  project_id    Int?
+  scheduled_at  DateTime
+  ended_at      DateTime?
+  seller_id     Int?
+  technician_id Int?
+  address       String?   @db.Text
+  notes         String?   @db.Text
+  status        String?   @default("scheduled") @db.VarChar(50)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([lead_id])
+  @@index([customer_id])
+  @@index([project_id])
+  @@index([scheduled_at])
+}
+
+model Contract {
+  id             Int       @id @default(autoincrement())
+  lead_id        Int?
+  customer_id    Int?
+  project_id     Int?
+  quote_id       Int?
+  closed_amount  Decimal   @db.Decimal(12, 2)
+  payment_method String?   @db.VarChar(50)
+  installments   Int?      @default(1)
+  start_date     DateTime?
+  end_date       DateTime?
+  responsible_id Int?
+  contract_path  String?   @db.VarChar(500)
+  signed_at      DateTime?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@index([lead_id])
+  @@index([project_id])
+  @@index([quote_id])
+}

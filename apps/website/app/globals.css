@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet map (used on Service Areas page) - required for map tiles and controls to display */
+@import 'leaflet/dist/leaflet.css';
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+    --primary-color: #1a2036;
+    --primary-hover: #252b47;
+    --secondary-color: #d6b598;
+    --secondary-hover: #e0c4a8;
+    --text-dark: #1a2036;
+    --text-light: #4a5568;
+    --text-muted: #718096;
+    --bg-light: #f7f8fc;
+    --bg-white: #ffffff;
+    --border-color: #e2e8f0;
+  }
+
+  body {
+    @apply bg-white text-text-dark antialiased;
+    font-family: var(--font-inter);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+}
+
+/* Performance optimizations */
+img {
+  content-visibility: auto;
+}
+
+/* CTA Button Styles - Senior Floors Style */
+.cta-button {
+  @apply inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold text-white transition-all duration-200;
+  @apply bg-primary hover:bg-primary-600 active:bg-primary-700;
+  @apply shadow-md hover:shadow-lg hover:-translate-y-0.5;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+.cta-button-secondary {
+  @apply inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-semibold transition-all duration-200;
+  @apply bg-secondary text-text-dark;
+  @apply hover:bg-secondary-100 active:bg-secondary-200;
+  @apply shadow-md hover:shadow-lg hover:-translate-y-0.5;
+  @apply focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+}
+
+/* Sticky CTA */
+.sticky-cta {
+  @apply fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg;
+  @apply md:hidden;
+}

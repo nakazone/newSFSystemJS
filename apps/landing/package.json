@@ -1,0 +1,29 @@
+{
+  "name": "landing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Senior Floors - Landing Page apenas (formularios, send-lead, receive-lead)",
+  "scripts": {
+    "dev": "next dev -p 8000",
+    "build": "prisma generate && next build",
+    "start": "next start -p 8000",
+    "lint": "next lint",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.1.3",
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "prisma": "^6.19.2",
+    "typescript": "^5.3.3"
+  }
+}
