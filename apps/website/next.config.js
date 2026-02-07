@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/newsite',
+  // basePath: '' — site na raiz do domínio (www.senior-floors.com)
   reactStrictMode: true,
   images: {
     formats: ['image/avif', 'image/webp'],

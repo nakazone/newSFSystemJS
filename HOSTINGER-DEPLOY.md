@@ -4,6 +4,8 @@ Este repositorio e um **monorepo** (Landing, Sistema, Site). O Hostinger espera 
 
 ## Deploy do Site Principal (www.senior-floors.com)
 
+**Para o novo site Node aparecer em www.senior-floors.com (e nao o site antigo):** no Hostinger, o **dominio** (www.senior-floors.com) tem de estar associado a esta **Node.js Web App**, nao ao site antigo (public_html / PHP). No painel, em Domains ou na Node.js app, defina www.senior-floors.com como dominio desta aplicacao. Se o dominio ainda apontar para public_html, continuara a ver o site antigo.
+
 No painel do Hostinger (Node.js Web App / Git):
 
 1. **Repositorio:** `https://github.com/nakazone/senior-floors.git` (branch `main`).
@@ -26,7 +28,7 @@ No painel do Hostinger (Node.js Web App / Git):
 6. **Variaveis de ambiente:** obrigatorias para o site + admin:
    - `DATABASE_URL` = URL MySQL (ex.: `mysql://user:pass@host:3306/dbname`)
    - `NEXTAUTH_SECRET` = chave aleatoria (ex.: `openssl rand -base64 32`)
-   - `NEXTAUTH_URL` = `https://www.senior-floors.com/newsite`
+   - `NEXTAUTH_URL` = `https://www.senior-floors.com`
    - `NEXT_PUBLIC_SITE_URL` = `https://www.senior-floors.com`
 
 7. **Banco MySQL:** O app website usa **MySQL**. No primeiro deploy, crie o banco no Hostinger e rode as migracoes (via SSH ou script):
@@ -73,3 +75,6 @@ Resumo: **Build** = `npm install && npm run build` e **Start** = `npm run start:
 
 - **"Can't reach database server at \`host:3306\`"**  
   A `DATABASE_URL` deve ser a URL real do MySQL do Hostinger (ex.: `mysql://usuario:senha@localhost:3306/nome_do_banco`). Nao use o host literal `host` — use o host que o painel do Hostinger mostra para o banco (geralmente `localhost`). O build do website nao precisa do banco (paginas admin e de dados sao `force-dynamic`); o erro so aparece se alguma pagina tentar conectar no build.
+
+- **www.senior-floors.com mostra o site antigo**  
+  O dominio esta a ser servido pelo site antigo (public_html / PHP). Para mostrar o **novo site Node**, no painel Hostinger associe **www.senior-floors.com** a esta **Node.js Web App** (e nao ao alojamento estatico/PHP). O app Next nao usa mais `/newsite`; serve na raiz do dominio.
