@@ -21,7 +21,10 @@ export async function GET(request: NextRequest) {
     const quotes = await prisma.quote.findMany({
       where: Object.keys(where).length ? where : undefined,
       orderBy: { created_at: 'desc' },
-      include: { quote_items: true },
+      include: {
+        quote_items: true,
+        lead: { select: { id: true, name: true, email: true } },
+      },
     })
     return NextResponse.json({ success: true, data: quotes })
   } catch (e) {
@@ -47,6 +50,7 @@ export async function POST(request: NextRequest) {
   const customer_id = body.customer_id != null ? Number(body.customer_id) : null
   const project_id = body.project_id != null ? Number(body.project_id) : null
   const created_by = body.created_by != null ? Number(body.created_by) : null
+  const margin_percent = body.margin_percent != null ? Number(body.margin_percent) : null
   const items = Array.isArray(body.items) ? body.items as Array<Record<string, unknown>> : []
   if (!lead_id && !customer_id && !project_id) {
     return NextResponse.json(
@@ -82,15 +86,20 @@ export async function POST(request: NextRequest) {
       notes: single.notes != null ? String(single.notes) : undefined,
     })
   }
+  const materials_amount = total_amount
+  const margin = margin_percent != null && !Number.isNaN(margin_percent) ? margin_percent : 0
+  const labor_amount = materials_amount * (margin / 100)
+  const total_with_margin = materials_amount + labor_amount
   try {
     const quote = await prisma.quote.create({
       data: {
         lead_id: lead_id || undefined,
         customer_id: customer_id || undefined,
         project_id: project_id || undefined,
-        total_amount,
-        labor_amount: 0,
-        materials_amount: total_amount,
+        total_amount: total_with_margin,
+        labor_amount: labor_amount,
+        materials_amount: materials_amount,
+        margin_percent: margin > 0 ? margin : undefined,
         status: 'draft',
         created_by: created_by && Number.isInteger(created_by) ? created_by : undefined,
         quote_items: {

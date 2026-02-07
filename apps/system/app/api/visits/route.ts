@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
     const visits = await prisma.visit.findMany({
       where: Object.keys(where).length ? where : undefined,
       orderBy: { scheduled_at: 'desc' },
+      include: {
+        lead: { select: { id: true, name: true, email: true, phone: true } },
+      },
     })
     return NextResponse.json({ success: true, data: visits })
   } catch (e) {
@@ -58,7 +61,7 @@ export async function POST(request: NextRequest) {
   }
   if (!lead_id && !customer_id && !project_id) {
     return NextResponse.json(
-      { success: false, message: 'At least one of lead_id, customer_id, or project_id is required' },
+      { success: false, message: 'Informe lead, customer ou project (lead_id, customer_id ou project_id)' },
       { status: 400 }
     )
   }
