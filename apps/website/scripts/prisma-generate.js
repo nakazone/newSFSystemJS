@@ -5,8 +5,9 @@
  */
 const { execSync } = require('child_process');
 
+// Fallback so prisma generate works in CI when DATABASE_URL is unset (schema is MySQL).
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'file:./prisma/dev.db';
+  process.env.DATABASE_URL = 'mysql://localhost:3306/placeholder';
 }
 
 execSync('npx prisma generate', { stdio: 'inherit', env: process.env });

@@ -1,8 +1,8 @@
 # Deploy no Hostinger (Git + Node.js)
 
-Este repositorio e um **monorepo** (Landing, Sistema, Site). O Hostinger espera um unico app Node/Next na raiz, por isso e preciso configurar **comandos de build e start** manualmente.
+Este repositorio e um **monorepo** (Landing, Sistema, Site). O Hostinger espera um unico app Node/Next na raiz, por isso use os comandos abaixo para o **site principal** (apps/website).
 
-## Opcao 1: Deploy do Site Principal (www.senior-floors.com)
+## Deploy do Site Principal (www.senior-floors.com)
 
 No painel do Hostinger (Node.js Web App / Git):
 
@@ -10,19 +10,30 @@ No painel do Hostinger (Node.js Web App / Git):
 
 2. **Build command** (obrigatorio):
    ```bash
-   npm install && npm run build -w website
+   npm install && npm run build:hostinger
    ```
+   Isso builda o app `website` e copia o output para a raiz (`.next`), para o Hostinger encontrar o resultado.
 
 3. **Start command:**
    ```bash
-   npm run start -w website
+   npm run start:hostinger
    ```
 
-4. **Application root / Install path:** deixe vazio (ou o padrao). O Hostinger clona o repo inteiro; os comandos acima rodam o app em `apps/website`.
+4. **Output directory:** deixe em branco ou use `.next` (o build:hostinger ja coloca o output na raiz).
 
 5. **Node.js version:** 18.x ou 20.x.
 
-6. **Variaveis de ambiente:** configure no painel (ex.: `DATABASE_URL`, `NEXTAUTH_SECRET`) conforme o `.env.example` em `apps/website`.
+6. **Variaveis de ambiente:** obrigatorias para o site + admin:
+   - `DATABASE_URL` = URL MySQL (ex.: `mysql://user:pass@host:3306/dbname`)
+   - `NEXTAUTH_SECRET` = chave aleatoria (ex.: `openssl rand -base64 32`)
+   - `NEXTAUTH_URL` = `https://www.senior-floors.com/newsite`
+   - `NEXT_PUBLIC_SITE_URL` = `https://www.senior-floors.com`
+
+7. **Banco MySQL:** O app website usa **MySQL**. No primeiro deploy, crie o banco no Hostinger e rode as migracoes (via SSH ou script):
+   ```bash
+   cd apps/website && npx prisma db push
+   ```
+   Ou use `npx prisma migrate deploy` se tiver migracoes MySQL.
 
 ---
 
@@ -51,4 +62,4 @@ O Hostinger detecta o framework pela raiz do repo. Fizemos o seguinte:
 - Existe um `next.config.js` na **raiz** so para a deteccao aceitar o projeto.
 - Voce **precisa** informar os comandos acima (Build e Start). Nao use os sugeridos automaticamente (ex.: so `npm run build`), pois o padrao do repo builda os 3 apps.
 
-Resumo: **Build** = `npm install && npm run build -w website` e **Start** = `npm run start -w website` para o site principal.
+Resumo: **Build** = `npm install && npm run build:hostinger` e **Start** = `npm run start:hostinger`.
